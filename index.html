@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JWT Login Test with WebSocket</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>JWT Login Test</h1>
+    
+    <h2>Login</h2>
+    <label for="username">Username:</label>
+    <input type="text" id="username" value="user1"><br><br>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" value="123"><br><br>
+
+    <button onclick="login()">Login</button><br><br>
+
+    <h2>Token:</h2>
+    <textarea id="token" rows="4" cols="50" readonly></textarea><br><br>
+
+    <h2>Room:</h2>
+    <input type="text" id="room" placeholder="Enter room name"><br><br>
+    <button onclick="connectWebSocket()">Join Room</button><br><br>
+
+    <h2>User Info:</h2>
+    <button onclick="getUserInfo()">Get User Info</button><br><br>
+    <pre id="userInfo"></pre>
+
+    <h2>WebSocket Messages:</h2>
+    <textarea id="message" rows="4" cols="50"></textarea><br><br>
+    <button onclick="sendMessage()">Send WebSocket Message</button><br><br>
+    <pre id="wsMessages"></pre>
+
+    <script>
+        let accessToken = '';
+        let ws;  
+        let currentRoom = '';  // Track current room
+        let host = 'localhost'; // ATUALIZAR HOST
+        
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            // ATUALIZAR HOST
+            fetch(`http://${host}:8000/token`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'username': username,
+                    'password': password
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.access_token) {
+                    accessToken = data.access_token;
+                    document.getElementById('token').value = accessToken;
+                    alert('Login successful!');
+                } else {
+                    alert('Login failed!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function getUserInfo() {
+            if (!accessToken) {
+                alert('Please login first.');
+                return;
+            }
+            // ATUALIZAR HOST
+            fetch(`http://${host}:8000/users/me`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('userInfo').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function connectWebSocket() {
+            const room = document.getElementById('room').value;
+            if (!room) {
+                alert('Please enter a room name.');
+                return;
+            }
+
+            if (ws) {
+                ws.close(); 
+            }
+
+            // ATUALIZAR HOST
+            ws = new WebSocket(`ws://${host}:8000/ws/${room}`);
+
+            
+            ws.onopen = () => {
+                console.log('Connected to WebSocket');
+                
+                currentRoom = room;
+                
+                document.getElementById('wsMessages').textContent = '';
+            };
+
+            
+            ws.onmessage = (event) => {
+                const message = event.data;
+                console.log('Received message:', message);
+                document.getElementById('wsMessages').textContent += message + '\n';
+            };
+
+            
+            ws.onclose = () => {
+                console.log('WebSocket connection closed');
+            };
+
+            
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+        }
+
+        function sendMessage() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                const message = document.getElementById('message').value;
+                ws.send(message);  
+                console.log('Sent message:', message);
+            } else {
+                console.error('WebSocket is not connected.');
+            }
+        }
+    </script>
+</body>
+</html>

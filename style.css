@@ -1,0 +1,84 @@
+/* styles.css */
+
+/* Definindo o estilo do corpo */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Estilizando o título principal */
+h1 {
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+/* Estilizando os subtítulos */
+h2 {
+    color: #555;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+/* Estilizando os rótulos */
+label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+/* Estilizando os campos de entrada */
+input[type="text"],
+input[type="password"],
+textarea {
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+}
+
+/* Estilizando o botão */
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Estilizando o elemento pré-formatado */
+pre {
+    background-color: #e9ecef;
+    padding: 10px;
+    border-radius: 4px;
+    max-width: 400px;
+    width: 100%;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Estilizando as áreas de texto */
+textarea {
+    resize: vertical;
+}
+
+/* Ajustando o layout das áreas de texto e botões */
+textarea,
+button {
+    margin-top: 10px;
+}
